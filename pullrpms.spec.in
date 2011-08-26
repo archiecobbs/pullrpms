@@ -45,7 +45,7 @@ command line.
 rm -rf ${RPM_BUILD_ROOT}
 
 %prep
-%setup
+%setup -n %{name}-@PACKAGE_VERSION@
 
 %build
 %configure

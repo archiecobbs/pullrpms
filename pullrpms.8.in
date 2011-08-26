@@ -144,8 +144,8 @@ rebuild time
 This man page documents
 .Nm
 version @PACKAGE_VERSION@-@GIT_SUFFIX@.
-.Sh AUTHOR
 .Sh SEE ALSO
 .Xr createrepo 8 ,
 .Xr zypper 8 .
+.Sh AUTHOR
 .An Archie L. Cobbs Aq archie@dellroad.org
