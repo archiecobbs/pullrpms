@@ -1,0 +1,15 @@
+# $Id$
+
+#
+# Overrides for normal stuff in /etc/zypp/zypp.conf
+#
+
+[main]
+arch = @PULLRPMS_ARCH@
+cachedir = @PULLRPMS_TARGET_DIR@
+metadatadir = @PULLRPMS_TARGET_DIR@/raw
+solvfilesdir = @PULLRPMS_TARGET_DIR@/solv
+packagesdir = @PULLRPMS_TARGET_DIR@/packages
+download.max_concurrent_connections = 5
+download.use_deltarpm = false
+

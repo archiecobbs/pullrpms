@@ -1,0 +1,17 @@
+
+Simplified instructions:
+
+    1. Ensure you have the following software packages installed:
+
+        zypper >= 1.4
+        createrepo >= 0.9.8
+
+    2. ./configure && make && sudo make install
+
+Please see
+
+    http://code.google.com/p/pullrpms
+
+for more information.
+
+$Id$

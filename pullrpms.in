@@ -1,0 +1,222 @@
+#!/bin/bash
+# $Id$
+
+# Set constants and defaults
+NAME="@PACKAGE@"
+VERSION="@PACKAGE_VERSION@"
+IDENT='$Id$'
+ZYPPER="@ZYPPER@"
+CREATEREPO="@CREATEREPO@"
+DEFAULT_TARGET_ARCH=`uname -m`
+ZYPP_CONF_TEMPLATE="@pkgdatadir@/zypp.conf.in"
+PULLRPMS_REPOS="@REPOSDIR@"
+CREATEREPO_CACHE="@CACHEDIR@"
+
+# Usage message
+usage()
+{
+    echo "Usage:" 1>&2
+    echo "    ${NAME} [-v] [-a arch] [-d reposdir] [--linkin dir] [--linkout dir] targetdir rpm ..." 1>&2
+    echo "Options:" 1>&2
+    echo "    -a          Specify target architecture (default ${DEFAULT_TARGET_ARCH})" 1>&2
+    echo "    -d          Specify repos.d directory to copy from; may be repeated" 1>&2
+    echo "    --linkin    Hard link in cached RPMs from \`dir' before resolution" 1>&2
+    echo "    --linkout   Hard link out resolved RPMs into cache directory \`dir' after resolution" 1>&2
+    echo "    --help      Display this help message and exit" 1>&2
+    echo "    --version   Display version and exit" 1>&2
+    echo "    -v          Run verbosely" 1>&2
+}
+
+# Show version
+show_version()
+{
+    echo "${NAME} version ${VERSION} (${IDENT})"
+}
+
+# Log functions
+log()
+{
+    echo ${NAME}: ${1+"$@"} 1>&2
+}
+
+verbose_log()
+{
+    if "${VERBOSE}"; then
+        echo ${NAME}: ${1+"$@"} 1>&2
+    fi
+}
+
+# Error function
+errout()
+{
+    log ${1+"$@"}
+    exit 1
+}
+
+# Patch function
+sed_patch_file()
+{
+    FILE="${1}"
+    shift
+    sed ${1+"$@"} < "${FILE}" > "${FILE}".new
+    if ! diff -q "${FILE}" "${FILE}".new >/dev/null; then
+        cat "${FILE}".new > "${FILE}"
+    fi
+    rm "${FILE}".new
+}
+
+# Copy *.repo files from directory params
+copy_repos()
+{
+    rm -rf "${TARGET_DIR}/${PULLRPMS_REPOS}"
+    mkdir "${TARGET_DIR}/${PULLRPMS_REPOS}"
+    for REPO in `find $* -maxdepth 1 -a -name '*.repo'`; do
+        cp "${REPO}" "${TARGET_DIR}/${PULLRPMS_REPOS}"/
+    done
+}
+
+# Bail on errors
+set -e
+
+# Set defaults
+VERBOSE="false"
+TARGET_ARCH="${DEFAULT_TARGET_ARCH}"
+REPOS_DIRS=""
+LINKIN_DIR=""
+LINKOUT_DIR=""
+
+# Parse flags passed in on the command line
+while [ ${#} -gt 0 ]; do
+    case "$1" in
+        -a)
+            shift
+            [ ${#} -gt 0 ] || errout "\`-a' flag requires an argument"
+            TARGET_ARCH="$1"
+            shift
+            ;;
+        -d)
+            shift
+            [ ${#} -gt 0 ] || errout "\`-d' flag requires an argument"
+            REPOS_DIRS="${REPOS_DIRS} $1"
+            shift
+            ;;
+        --linkin)
+            shift
+            [ ${#} -gt 0 ] || errout "\`--linkin' flag requires an argument"
+            LINKIN_DIR="$1"
+            shift
+            ;;
+        --linkout)
+            shift
+            [ ${#} -gt 0 ] || errout "\`--linkout' flag requires an argument"
+            LINKOUT_DIR="$1"
+            shift
+            ;;
+        -h|--help)
+            usage
+            exit
+            ;;
+        --version)
+            show_version
+            exit
+            ;;
+        -v)
+            VERBOSE="true"
+            shift
+            ;;
+        -h|--help)
+            usage
+            exit
+            ;;
+        --)
+            shift
+            break
+            ;;
+        -*)
+            errout "unrecognized flag \`${1}'"
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+case "${#}" in
+    0|1)
+        usage
+        exit 1
+        ;;
+    *)
+        TARGET_DIR="$1"
+        shift
+        ;;
+esac
+
+# Check for root
+if ! [ `id -u` -eq 0 ]; then
+    errout "you must be root"
+fi
+
+# Absolutify and verify target dir
+if ! echo "${TARGET_DIR}" | grep -q ^/; then
+    TARGET_DIR="`pwd`/${TARGET_DIR}"
+fi
+if ! [ -e "${TARGET_DIR}" ]; then
+    mkdir "${TARGET_DIR}"
+elif ! [ -d "${TARGET_DIR}" ]; then
+    errout "${TARGET_DIR}: not a directory"
+fi
+
+# Copy repository files if specified; otherwise initialize as necessary
+if [ -n "${REPOS_DIRS}" ]; then
+    copy_repos ${REPOS_DIRS}
+elif ! [ -e "${TARGET_DIR}/${PULLRPMS_REPOS}" ]; then
+    copy_repos /etc/zypp/repos.d
+elif ! [ -d "${TARGET_DIR}/${PULLRPMS_REPOS}" ]; then
+    errout "${PULLRPMS_REPOS}: not a directory"
+fi
+
+# Make sure all repository files have keeppackages=1
+if [ -d "${TARGET_DIR}/${PULLRPMS_REPOS}" ]; then
+    for REPO in `find "${TARGET_DIR}/${PULLRPMS_REPOS}" -maxdepth 1 -a -name '*.repo'`; do
+        sed_patch_file "${REPO}" -r 's/^(keeppackages=).*$/\11/g'
+    done
+fi
+
+# Create temporary zypp.conf we can use (sadly, command line flags do not suffice)
+TEMP_CONFIG=`mktemp -q /tmp/${NAME}.XXXXXX`
+[ $? -eq 0 ] || errout "can't create temporary file"
+trap "rm -f ${TEMP_CONFIG}" 0 2 3 5 10 13 15
+cat "${ZYPP_CONF_TEMPLATE}" > "${TEMP_CONFIG}"
+sed_patch_file "${TEMP_CONFIG}" -r \
+  -e 's|@PULLRPMS_ARCH@|'"${TARGET_ARCH}"'|g' \
+  -e 's|@PULLRPMS_TARGET_DIR@|'"${TARGET_DIR}"'|g'
+
+# Make libzypp use our modified config
+export ZYPP_CONF="${TEMP_CONFIG}"
+
+# Link in cached RPMs
+if [ -n "${LINKIN_DIR}" ]; then
+    log "linking resolved rpms in from ${LINKIN_DIR}..."
+    mkdir -p "${TARGET_DIR}"/packages
+    cp -aln "${LINKIN_DIR}"/* "${TARGET_DIR}"/packages/
+fi
+
+# Download RPMs into repository dir
+log "refreshing repository meta-data..."
+"${ZYPPER}" --disable-system-resolvables refresh
+
+# Download RPMs into repository dir
+log "downloading requested rpms..."
+"${ZYPPER}" --disable-system-resolvables install --auto-agree-with-licenses --download-only ${1+"$@"}
+
+# Link out RPMs
+if [ -n "${LINKOUT_DIR}" ]; then
+    log "linking resolved rpms out to ${LINKOUT_DIR}..."
+    mkdir -p "${LINKOUT_DIR}"
+    cp -aln "${TARGET_DIR}"/packages/* "${LINKOUT_DIR}"/
+fi
+
+# Regenerate repository
+log "regenerating repository meta-data..."
+"${CREATEREPO}" -c "${TARGET_DIR}/${CREATEREPO_CACHE}" --update "${TARGET_DIR}"
+

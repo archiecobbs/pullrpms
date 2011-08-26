@@ -1,0 +1,18 @@
+pullrpms - Build an RPM repository from transitively resolved dependencies 
+
+The pullrpms utility creates (or adds to) an RPM repository using the
+transitive closure of the RPMs and/or RPM requirements specified on the
+command line.
+
+Home page: http://pullrpms.googlecode.com/
+
+See INSTALL for installation instructions. After installing, see the pullrpms(8)
+man page for how to run it.
+
+See COPYING for license.
+
+See CHANGES for change history.
+
+Enjoy!
+
+$Id$

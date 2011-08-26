@@ -1,0 +1,147 @@
+.\"  -*- nroff -*-
+.\"
+.\" $Id$
+.\"
+.Dd August 26, 2011
+.Dt PULLRPMS 8
+.Os
+.Sh NAME
+.Nm pullrpms
+.Nd build an RPM repository from transitively resolved dependencies
+.Sh SYNOPSIS
+.Nm pullrpms
+.Bk -words
+.Op Fl v
+.Op Fl a Ar arch
+.Op Fl d Ar reposdir
+.Op Fl \-linkin Ar dir
+.Op Fl \-linkout Ar dir
+.Ar targetdir
+.Ar rpm ...
+.Ek
+.Sh DESCRIPTION
+.Nm
+creates (or adds to) an rpm-md RPM repository using the transitive closure of the RPMs and/or RPM requirements
+specified on the command line.
+The repository is created in the directory
+.Ar targetdir .
+.Pp
+The repositories that
+.Nm
+pulls from are those defined by the
+.Pa *.repo
+files in the first directory found among (in order of precedence):
+.Bl -tag -width xx
+.It o
+The
+.Ar reposdir
+specified with the
+.Fl d
+flag;
+.It o
+An existing
+.Pa @REPOSDIR@
+subdirectory of
+.Ar targetdir ; or
+.It o
+.Pa /etc/zypp/repos.d .
+.El
+.Pp
+In any case, when
+.Nm
+completes, the
+.Pa @REPOSDIR@
+subdirectory
+of
+.Ar targetdir
+will contain the chosen repo files, thus serving as the default choices for next time.
+.Pp
+.Nm
+caches upstream repository meta-data and resolution state.
+.Nm
+will not redundantly download RPMs already resolved by a previous invocation.
+Together these optimizations make regeneration after minor changes proceed relatively quickly.
+.Pp
+You use the
+.Fl \-linkin
+and
+.Fl \-linkout
+flags to copy (hard link) RPMs into the repository prior to resolution, or out of the repository after resolution (respectively).
+In other words, the
+.Fl \-linkin
+flag pre-seeds the repository from a directory previously created (or updated) with the
+.Fl \-linkout
+flag.
+This allows multiple repositories to be created based on an initial shared set of RPMs,
+or to share a common RPM cache, eliminating redundant downloads.
+.Pp
+.Nm
+is relies on the
+.Xr zypper 8
+and
+.Xr createrepo 8
+utilities.
+.Sh OPTIONS
+.Bl -tag -width Ds
+.It Fl a
+Specify the preferred architecture.
+This flag is needed when constructing a repository for a machine whose architecture
+differs from that of the local machine.
+.It Fl d
+Specify a new repository set to pull from.
+The
+.Ar reposdir
+parameter is a directory from which to copy
+.Pa *.repo
+repository files.
+Any existing files in the
+.Pa @REPOSDIR@
+subdirectory of
+.Ar targetdir
+will be removed first.
+.Pp
+The
+.Fl d
+flag may be repeated to combine the content of multiple directories.
+.It Fl \-linkin
+Prior to resolution, copy in the RPMs from
+.Ar dir
+into the repository using hard links.
+The directory
+.Ar dir
+should have been populated by a previous invocation, using the
+.Fl \-linkout
+flag.
+.It Fl \-linkout
+After resolution, copy out all of the RPMs in the repository into
+.Ar dir
+using hard links.
+The directory
+.Ar dir
+will be created if needed.
+Existing RPMs in
+.Ar dir
+will remain undisturbed.
+.It Fl v
+Increase verbosity.
+.El
+.Sh FILES
+.Bl -tag -width XXXX
+.It Pa targetdir/@REPOSDIR@
+Source repository definition files
+.It Pa targetdir/packages
+Resolved RPMs
+.It Pa targetdir/raw , Pa targetdir/solv
+Cached upstream repository meta-data and resolution solver state
+.It Pa targetdir/repodata
+Generated repository meta-data
+.It Pa targetdir/@CACHEDIR@
+Cached meta-data for optimizing
+.Pa repoddata
+rebuild time
+.El
+.Sh AUTHOR
+.Sh SEE ALSO
+.Xr createrepo 8 ,
+.Xr zypper 8 .
+.An Archie L. Cobbs Aq archie@dellroad.org
