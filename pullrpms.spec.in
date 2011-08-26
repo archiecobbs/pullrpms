@@ -22,14 +22,14 @@
 %define pkgdir      %{_datadir}/%{name}
 
 Name:           %{name}
-Version:        @PACKAGE_VERSION@.@GIT_SUFFIX@
+Version:        @PACKAGE_VERSION@
 Release:        1
 Summary:        Build RPM repositories from transitively resolved dependencies
 Group:          System/Packages
 License:        Apache License, Version 2.0
 BuildRoot:      %{_tmppath}/%{name}-root
 Buildarch:      noarch
-Source:         %{name}-@PACKAGE_VERSION@.tar.gz
+Source:         %{name}-%{version}.tar.gz
 URL:            http://code.google.com/p/pullrpms/
 BuildRequires:  zypper
 BuildRequires:  createrepo
@@ -45,7 +45,7 @@ command line.
 rm -rf ${RPM_BUILD_ROOT}
 
 %prep
-%setup -n %{name}-@PACKAGE_VERSION@
+%setup
 
 %build
 %configure

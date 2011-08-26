@@ -30,7 +30,7 @@ usage()
 # Show version
 show_version()
 {
-    echo "${NAME} version ${VERSION}-${GIT_SUFFIX}"
+    echo "${NAME} version ${VERSION}"
 }
 
 # Log functions

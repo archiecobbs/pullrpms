@@ -143,7 +143,7 @@ rebuild time
 .Sh VERSION
 This man page documents
 .Nm
-version @PACKAGE_VERSION@-@GIT_SUFFIX@.
+version @PACKAGE_VERSION@.
 .Sh SEE ALSO
 .Xr createrepo 8 ,
 .Xr zypper 8 .

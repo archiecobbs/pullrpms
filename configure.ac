@@ -18,7 +18,10 @@
 # $Id$
 #
 
-AC_INIT([pullrpms Build an RPM repository from transitively resolved dependencies], [1.0], [http://code.google.com/p/pullrpms/], [pullrpms])
+# Initialize autoconf
+AC_INIT([pullrpms Build an RPM repository from transitively resolved dependencies],
+  m4_esyscmd([git describe --tags --always --abbrev=8 --dirty | sed 's/^v//g' | tr '-' '_' | tr -d '\n']),
+  [http://code.google.com/p/pullrpms/], [pullrpms])
 AC_CONFIG_AUX_DIR(scripts)
 AM_INIT_AUTOMAKE
 dnl AM_MAINTAINER_MODE
@@ -26,10 +29,6 @@ AC_PREREQ(2.59)
 AC_REVISION($Id$)
 AC_PREFIX_DEFAULT(/usr)
 AC_PROG_MAKE_SET
-
-# Get git revision suffix
-[GIT_SUFFIX=`echo '$Id$' | sed -e 's/^.Id: \([0-9a-f]\{8\}\).*$/\1/g'`]
-AC_SUBST(GIT_SUFFIX)
 
 # Configuration of directory names
 AC_ARG_WITH([cachedir], [specify cache subdirectory name], [CACHEDIR="$withval"], [CACHEDIR="cache"])
