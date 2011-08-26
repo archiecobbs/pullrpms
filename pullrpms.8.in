@@ -140,6 +140,10 @@ Cached meta-data for optimizing
 .Pa repoddata
 rebuild time
 .El
+.Sh VERSION
+This man page documents
+.Nm
+version @PACKAGE_VERSION@-@GIT_SUFFIX@.
 .Sh AUTHOR
 .Sh SEE ALSO
 .Xr createrepo 8 ,

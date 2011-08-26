@@ -33,6 +33,7 @@ EXTRA_DIST=         CHANGES pullrpms.in pullrpms.8.in pullrpms.spec.in zypp.conf
 subst=              sed \
 			-e 's|@PACKAGE[@]|$(PACKAGE)|g' \
 			-e 's|@PACKAGE_VERSION[@]|$(PACKAGE_VERSION)|g' \
+			-e 's|@GIT_SUFFIX[@]|$(GIT_SUFFIX)|g' \
 			-e 's|@REPOSDIR[@]|$(REPOSDIR)|g' \
 			-e 's|@CACHEDIR[@]|$(CACHEDIR)|g' \
 			-e 's|@ZYPPER[@]|$(ZYPPER)|g' \

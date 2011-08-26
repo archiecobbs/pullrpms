@@ -27,6 +27,10 @@ AC_REVISION($Id$)
 AC_PREFIX_DEFAULT(/usr)
 AC_PROG_MAKE_SET
 
+# Get git revision suffix
+[GIT_SUFFIX=`echo '$Id$' | sed -e 's/^.Id: \([0-9a-f]\{8\}\).*$/\1/g'`]
+AC_SUBST(GIT_SUFFIX)
+
 # Configuration of directory names
 AC_ARG_WITH([cachedir], [specify cache subdirectory name], [CACHEDIR="$withval"], [CACHEDIR="cache"])
 AC_ARG_WITH([reposdir], [specify repos subdirectory name], [REPOSDIR="$withval"], [REPOSDIR="repos"])

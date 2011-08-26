@@ -22,7 +22,7 @@
 %define pkgdir      %{_datadir}/%{name}
 
 Name:           %{name}
-Version:        @PACKAGE_VERSION@
+Version:        @PACKAGE_VERSION@-@GIT_SUFFIX@
 Release:        1
 Summary:        Build RPM repositories from transitively resolved dependencies
 Group:          System/Packages

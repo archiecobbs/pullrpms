@@ -4,6 +4,7 @@
 # Set constants and defaults
 NAME="@PACKAGE@"
 VERSION="@PACKAGE_VERSION@"
+GIT_SUFFIX="@GIT_SUFFIX@"
 IDENT='$Id$'
 ZYPPER="@ZYPPER@"
 CREATEREPO="@CREATEREPO@"
@@ -30,7 +31,7 @@ usage()
 # Show version
 show_version()
 {
-    echo "${NAME} version ${VERSION} (${IDENT})"
+    echo "${NAME} version ${VERSION}-${GIT_SUFFIX}"
 }
 
 # Log functions
