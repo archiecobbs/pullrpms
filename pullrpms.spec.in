@@ -29,7 +29,7 @@ Group:          System/Packages
 License:        Apache License, Version 2.0
 BuildRoot:      %{_tmppath}/%{name}-root
 Buildarch:      noarch
-Source:         %{name}-%{version}.tar.gz
+Source:         %{name}-@PACKAGE_VERSION@.tar.gz
 URL:            http://code.google.com/p/pullrpms/
 BuildRequires:  zypper
 BuildRequires:  createrepo
