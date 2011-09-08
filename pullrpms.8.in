@@ -1,7 +1,5 @@
 .\"  -*- nroff -*-
 .\"
-.\" $Id$
-.\"
 .Dd August 26, 2011
 .Dt PULLRPMS 8
 .Os

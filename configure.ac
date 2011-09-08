@@ -15,8 +15,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# $Id$
-#
 
 # Initialize autoconf
 AC_INIT([pullrpms Build an RPM repository from transitively resolved dependencies],
@@ -26,7 +24,6 @@ AC_CONFIG_AUX_DIR(scripts)
 AM_INIT_AUTOMAKE
 dnl AM_MAINTAINER_MODE
 AC_PREREQ(2.59)
-AC_REVISION($Id$)
 AC_PREFIX_DEFAULT(/usr)
 AC_PROG_MAKE_SET
 
