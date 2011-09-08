@@ -83,6 +83,7 @@ TARGET_ARCH="${DEFAULT_TARGET_ARCH}"
 REPOS_DIRS=""
 LINKIN_DIR=""
 LINKOUT_DIR=""
+ZYPP_VERBOSE=""
 
 # Parse flags passed in on the command line
 while [ ${#} -gt 0 ]; do
@@ -121,6 +122,7 @@ while [ ${#} -gt 0 ]; do
             ;;
         -v)
             VERBOSE="true"
+            ZYPP_VERBOSE="-v"
             shift
             ;;
         -h|--help)
@@ -206,7 +208,7 @@ log "refreshing repository meta-data..."
 
 # Download RPMs into repository dir
 log "downloading requested rpms..."
-"${ZYPPER}" --disable-system-resolvables install --auto-agree-with-licenses --download-only ${1+"$@"}
+"${ZYPPER}" ${ZYPP_VERBOSE} --disable-system-resolvables install --auto-agree-with-licenses --download-only ${1+"$@"}
 
 # Link out RPMs
 if [ -n "${LINKOUT_DIR}" ]; then

@@ -1,4 +1,8 @@
 
+Version 1.0.1
+
+    - Pass through verbose flag to zypper install invocation
+
 Version 1.0.0 released 26 August 2011
 
     - Initial release
