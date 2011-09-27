@@ -3,7 +3,6 @@
 # Set constants and defaults
 NAME="@PACKAGE@"
 VERSION="@PACKAGE_VERSION@"
-GIT_SUFFIX="@GIT_SUFFIX@"
 ZYPPER="@ZYPPER@"
 CREATEREPO="@CREATEREPO@"
 DEFAULT_TARGET_ARCH=`uname -m`
@@ -204,11 +203,11 @@ fi
 
 # Download RPMs into repository dir
 log "refreshing repository meta-data..."
-"${ZYPPER}" --disable-system-resolvables refresh
+"${ZYPPER}" --config "${TEMP_CONFIG}" --disable-system-resolvables refresh
 
 # Download RPMs into repository dir
 log "downloading requested rpms..."
-"${ZYPPER}" ${ZYPP_VERBOSE} --disable-system-resolvables install --auto-agree-with-licenses --download-only ${1+"$@"}
+"${ZYPPER}" --config "${TEMP_CONFIG}" ${ZYPP_VERBOSE} --disable-system-resolvables install --auto-agree-with-licenses --download-only ${1+"$@"}
 
 # Link out RPMs
 if [ -n "${LINKOUT_DIR}" ]; then

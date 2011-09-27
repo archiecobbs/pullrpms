@@ -5,6 +5,7 @@
 [main]
 arch = @PULLRPMS_ARCH@
 cachedir = @PULLRPMS_TARGET_DIR@
+reposdir = @PULLRPMS_TARGET_DIR@/repos
 metadatadir = @PULLRPMS_TARGET_DIR@/raw
 solvfilesdir = @PULLRPMS_TARGET_DIR@/solv
 packagesdir = @PULLRPMS_TARGET_DIR@/packages
