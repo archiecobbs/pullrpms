@@ -2,6 +2,7 @@
 Version 1.0.1
 
     - Pass through verbose flag to zypper install invocation
+    - Fix bug where -d flag was not overriding /etc/zypp/repos.d
 
 Version 1.0.0 released 26 August 2011
 
