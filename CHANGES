@@ -1,4 +1,8 @@
 
+Version 1.0.2
+
+    - Add workaround for https://bugzilla.novell.com/show_bug.cgi?id=659915
+
 Version 1.0.1 released 27 September 2011
 
     - Pass through verbose flag to zypper install invocation
