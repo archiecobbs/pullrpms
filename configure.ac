@@ -19,7 +19,7 @@
 # Initialize autoconf
 AC_INIT([pullrpms Build an RPM repository from transitively resolved dependencies],
   m4_esyscmd([git describe --tags --always --abbrev=8 --dirty | sed 's/^v//g' | tr '-' '_' | tr -d '\n']),
-  [http://code.google.com/p/pullrpms/], [pullrpms])
+  [https://github.com/archiecobbs/pullrpms], [pullrpms])
 AC_CONFIG_AUX_DIR(scripts)
 AM_INIT_AUTOMAKE
 dnl AM_MAINTAINER_MODE

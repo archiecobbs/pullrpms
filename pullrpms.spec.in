@@ -28,7 +28,7 @@ License:        Apache License, Version 2.0
 BuildRoot:      %{_tmppath}/%{name}-root
 Buildarch:      noarch
 Source:         %{name}-%{version}.tar.gz
-URL:            http://code.google.com/p/pullrpms/
+URL:            https://github.com/archiecobbs/%{name}/
 BuildRequires:  zypper
 BuildRequires:  createrepo
 Requires:       zypper >= 1.4
